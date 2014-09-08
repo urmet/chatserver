@@ -38,7 +38,7 @@ public:
 
 private:
     std::map<int, std::shared_ptr<Client>> clients;
-    std::map<int, std::shared_ptr<Client>> nick_unset;
+    std::map<int, std::shared_ptr<Client>> prelogin;
     std::map<std::string, ChatCommand> cmd_map;
     MessageQueue< Message > in_queue;
     void checkAndSetName ( Message& );

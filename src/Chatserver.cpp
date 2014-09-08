@@ -17,7 +17,7 @@ void ChatServer::run()
 
         switch ( message.tag ) {
         case MessageIn:
-            if ( nick_unset.count ( message.id ) ) {
+            if ( prelogin.count ( message.id ) ) {
                 checkAndSetName ( message );
                 break;
             }
@@ -40,7 +40,7 @@ void ChatServer::run()
             // start it up
             c->start();
             // shove it into the map
-            nick_unset[c->id()] = c;
+            prelogin[c->id()] = c;
             // and ask annoying questions
             *c << "Please choose a name for yourself(ASCII alnum only)" << std::endl;
             break;
@@ -52,8 +52,8 @@ void ChatServer::run()
                 c = clients[message.id];
                 clients.erase ( message.id );
             } else {
-                c = nick_unset[message.id];
-                nick_unset.erase ( message.id );
+                c = prelogin[message.id];
+                prelogin.erase ( message.id );
             }
             // stop client thread
             c->stop();
@@ -95,7 +95,7 @@ void ChatServer::run()
                     cmd_map[cmd] ( message.id, args, clients );
                 }
             } else {
-                auto &c = *nick_unset[message.id];
+                auto &c = *prelogin[message.id];
                 c<<"You can not use commands before choosing a name for yourself"<<std::endl;
             }
             break;
@@ -128,7 +128,7 @@ void ChatServer::registerCommand ( const std::string cmd, ChatCommand func )
 
 void ChatServer::checkAndSetName ( Message& m )
 {
-    Client &client = *nick_unset[m.id];
+    Client &client = *prelogin[m.id];
     // check for ASCII first
     if ( std::find_if ( m.data.begin(), m.data.end(),
         [] ( char & c ) { return !std::isalnum ( c ); } ) != m.data.end() ) {
@@ -150,6 +150,6 @@ void ChatServer::checkAndSetName ( Message& m )
     }
     client<< "You can now annoy other chatters. Please behave nicely"<<std::endl;
 
-    clients[m.id] = nick_unset[m.id];
-    nick_unset.erase ( m.id );
+    clients[m.id] = prelogin[m.id];
+    prelogin.erase ( m.id );
 }

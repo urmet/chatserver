@@ -1,6 +1,6 @@
 #include <streambuf>
 
-// null streambuf for logging purposes
+// null streambuf for (not)logging purposes
 
 class nullbuf : public std::streambuf
 {
