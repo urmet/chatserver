@@ -132,7 +132,7 @@ void ChatServer::checkAndSetName ( Message& m )
     // check for ASCII first
     if ( std::find_if ( m.data.begin(), m.data.end(),
         [] ( char & c ) { return !std::isalnum ( c ); } ) != m.data.end() ) {
-        
+
         client << "Name contains other things than ASCII alnum, try again" << std::endl;
         return;
     }
